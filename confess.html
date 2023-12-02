@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #container {
+      text-align: center;
+    }
+
+    #buttons {
+      position: relative;
+    }
+
+    #yesButton, #noButton {
+      cursor: pointer;
+      margin: 5px;
+      padding: 10px;
+      font-size: 16px;
+      position: absolute;
+    }
+  </style>
+  <script>
+    function displayMessage(choice) {
+      if (choice === 'yes') {
+        alert('I love you too! 💖');
+      }
+    }
+
+    function getDistance(elem1, elem2) {
+      const rect1 = elem1.getBoundingClientRect();
+      const rect2 = elem2.getBoundingClientRect();
+
+      const centerX1 = rect1.left + rect1.width / 2;
+      const centerY1 = rect1.top + rect1.height / 2;
+
+      const centerX2 = rect2.left + rect2.width / 2;
+      const centerY2 = rect2.top + rect2.height / 2;
+
+      return Math.sqrt(Math.pow(centerX1 - centerX2, 2) + Math.pow(centerY1 - centerY2, 2));
+    }
+
+    function moveButton(event) {
+      const yesButton = document.getElementById('yesButton');
+      const noButton = document.getElementById('noButton');
+      const buttonWidth = noButton.clientWidth;
+      const buttonHeight = noButton.clientHeight;
+
+      // Define a fixed pixel range for movement (smaller range)
+      const radius = 30; // Adjust this value to set the radius of movement
+
+      const maxX = window.innerWidth - buttonWidth;
+      const maxY = window.innerHeight - buttonHeight;
+
+      const newX = Math.max(0, Math.min(maxX, Math.random() * maxX));
+      const newY = Math.max(0, Math.min(maxY, Math.random() * maxY));
+
+      // Check the distance between the Yes and No buttons
+      const distance = getDistance(yesButton, noButton);
+
+      // Limit the movement if the distance is less than the radius
+      if (distance <= radius) {
+        noButton.style.left = `${newX}px`;
+        noButton.style.top = `${newY}px`;
+      } else {
+        // If outside the radius, reposition No button near the Yes button
+        const angle = Math.random() * 2 * Math.PI;
+        const x = yesButton.offsetLeft + radius * Math.cos(angle);
+        const y = yesButton.offsetTop + radius * Math.sin(angle);
+
+        noButton.style.left = `${Math.max(0, Math.min(maxX, x))}px`;
+        noButton.style.top = `${Math.max(0, Math.min(maxY, y))}px`;
+      }
+
+      event.stopPropagation();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const yesButton = document.getElementById('yesButton');
+      const noButton = document.getElementById('noButton');
+
+      yesButton.addEventListener('click', () => displayMessage('yes'));
+      noButton.addEventListener('mouseenter', moveButton);
+    });
+  </script>
+</head>
+<body>
+  <div id="container">
+    <h2>Do you love me?</h2>
+    <div id="buttons">
+      <button id="yesButton" style="left: 30%">Yes</button>
+      <button id="noButton" style="left: 60%; top: 50%" onmousedown="event.preventDefault()">No</button>
+    </div>
+  </div>
+</body>
+</html>
